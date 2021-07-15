@@ -16,12 +16,14 @@ const onClickStart = () => {
     
     Interval = setInterval(() => {
         document.body.style.backgroundColor = getRandomHexColor();
-    }, 1000);    
+    }, 1000);
+    start.setAttribute('disabled', true);
 }
 
 const onClickStop = () => {
     clearInterval(Interval);
     Interval = '';
+    start.removeAttribute('disabled');
 }
 
 start.addEventListener('click', onClickStart);

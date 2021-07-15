@@ -32,14 +32,10 @@ function pad(value) {
     return String(value).padStart(2, '0');
 }
 
-const timer = {  
-  currentData: Date.now(),  
-  onchange: () => {
-    const selectData = Date.parse(input.value);
-    // const selectData = Date.UTC(2021,6,15,16,3);
-    return selectData;
-  },
+btnStart.setAttribute('disabled', true);
 
+const timer = {  
+  currentData: Date.now(), 
   inteval: '',
   
   start() {
@@ -50,7 +46,7 @@ const timer = {
     this.inteval = setInterval(() => {
       // const currentData = Date.now() + 10800000;
       const currentData = Date.now();
-      const timetMS = this.onchange() - currentData;
+      const timetMS = onchange() - currentData;
 
       const timertext = convertMs(timetMS);
       
@@ -71,15 +67,22 @@ const timer = {
   }
 };
 
-const dataStart = () => {
-  if (timer.currentData > timer.onchange()) {
+const onchange = () => {
+  const selectData = Date.parse(input.value);
+  // const selectData = Date.UTC(2021,6,15,22,14);
+  if (timer.currentData > selectData) {
     Swal.fire({
       icon: 'error',
       title: 'Oops...',
       text: 'Please choose a date in the future!'
     });
-    return;
+  } else {
+    btnStart.removeAttribute('disabled');
   }
+  return selectData;
+};
+
+const dataStart = () => {  
   timer.start();
 }
 
