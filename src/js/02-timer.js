@@ -1,9 +1,13 @@
 import '../sass/main.scss';
+const Swal = require('sweetalert2');
 
-const date = new Date();
-console.log(date);
+const input = document.querySelector('#date-selector');
 const btnStart = document.querySelector('[data-start]');
-console.log(btnStart);
+
+const day = document.querySelector('[data-days]');
+const hours = document.querySelector('[data-hours]');
+const minutes = document.querySelector('[data-minutes]');
+const seconds = document.querySelector('[data-seconds]');
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -24,7 +28,60 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
+function pad(value) {
+    return String(value).padStart(2, '0');
+}
 
-const dataStart = () => { };
+const timer = {  
+  currentData: Date.now(),  
+  onchange: () => {
+    const selectData = Date.parse(input.value);
+    // const selectData = Date.UTC(2021,6,15,16,3);
+    return selectData;
+  },
 
+  inteval: '',
+  
+  start() {
+    if (this.inteval) {
+      return
+    }
+
+    this.inteval = setInterval(() => {
+      // const currentData = Date.now() + 10800000;
+      const currentData = Date.now();
+      const timetMS = this.onchange() - currentData;
+
+      const timertext = convertMs(timetMS);
+      
+      day.textContent = pad(`${timertext.days}`);
+      hours.textContent = pad(`${timertext.hours}`);
+      minutes.textContent = pad(`${timertext.minutes}`);
+      seconds.textContent = pad(`${timertext.seconds}`);    
+      
+      if (timetMS < 1000) {
+        this.stop();        
+      }
+    }, 1000);    
+  },
+
+  stop() {
+    clearInterval(this.inteval);
+    this.inteval = '';   
+  }
+};
+
+const dataStart = () => {
+  if (timer.currentData > timer.onchange()) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: 'Please choose a date in the future!'
+    });
+    return;
+  }
+  timer.start();
+}
+
+input.addEventListener('change', onchange);
 btnStart.addEventListener('click', dataStart);
